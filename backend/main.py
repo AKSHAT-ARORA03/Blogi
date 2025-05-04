@@ -7,6 +7,7 @@ from typing import List, Optional
 from pathlib import Path
 import logging
 import uvicorn
+import os
 
 from database import get_db, engine
 import models, schemas, crud, auth, image
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 models.Base.metadata.create_all(bind=engine)
 
 # Create uploads directory if it doesn't exist
-UPLOADS_DIR = Path("uploads")
+UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", "/tmp/uploads"))
 UPLOADS_DIR.mkdir(exist_ok=True)
 IMAGES_DIR = UPLOADS_DIR / "images"
 IMAGES_DIR.mkdir(exist_ok=True)
@@ -28,16 +29,17 @@ IMAGES_DIR.mkdir(exist_ok=True)
 app = FastAPI(title="Blog API")
 
 # Configure CORS middleware
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 # Mount static files directory for serving uploaded images
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 # Include routers
 app.include_router(auth.router, tags=["Authentication"])
