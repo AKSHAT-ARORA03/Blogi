@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { createPost, updatePost } from '@/lib/api';
 import Image from 'next/image';
-// Temporarily remove framer-motion import to fix build error
-// import { motion } from 'framer-motion';
 
 // Import API URL from api.ts
 const API_URL = 'http://localhost:8000';
@@ -24,7 +22,6 @@ type PostFormProps = {
 export default function PostForm({ postId, initialData, isEditing = false }: PostFormProps) {
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
-  const [imageUrl, setImageUrl] = useState(initialData?.image_url || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +59,7 @@ export default function PostForm({ postId, initialData, isEditing = false }: Pos
     
     try {
       // Upload image if selected
-      let finalImageUrl = imageUrl;
+      let finalImageUrl = initialData?.image_url || '';
       if (imageFile) {
         const formData = new FormData();
         formData.append('file', imageFile);
