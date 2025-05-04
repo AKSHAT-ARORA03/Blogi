@@ -2,53 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-// Temporarily remove framer-motion import to fix build error
-// import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { getPosts } from '@/lib/api';
 import PostCard from '@/components/posts/PostCard';
 import SearchBar from '@/components/posts/SearchBar';
 
-// Hero section animations - keeping the variables but not using the motion components
-const heroVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.8, ease: 'easeOut' }
-  }
-};
-
-const childVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (custom: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: custom * 0.2, duration: 0.6, ease: 'easeOut' }
-  })
-};
-
-// Staggered animation for features
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3
-    }
-  }
-};
-
-// Card hover animation
-const cardHoverVariants = {
-  hover: {
-    y: -10,
-    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-    transition: { duration: 0.3, ease: 'easeOut' }
-  }
-};
+// Define Post interface
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  author: { id: number; username: string };
+  created_at: string;
+  image_url?: string;
+  readingTime?: string;
+}
 
 // Calculate estimated reading time
 const calculateReadingTime = (content: string): string => {
@@ -60,27 +28,27 @@ const calculateReadingTime = (content: string): string => {
 
 export default function Home() {
   const { user } = useAuth();
-  const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
+  const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   // Fetch featured posts (most recent 5 posts)
-  useEffect(() => {
-    const fetchFeaturedPosts = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const data = await getPosts(1, 5);
-        setFeaturedPosts(data.items || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch posts');
-        setFeaturedPosts([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchFeaturedPosts = async () => {
+    setIsLoading(true);
+    setError(null);
     
+    try {
+      const data = await getPosts(1, 5);
+      setFeaturedPosts(data.items || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch posts');
+      setFeaturedPosts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchFeaturedPosts();
   }, []);
 
@@ -149,7 +117,7 @@ export default function Home() {
           ) : featuredPosts.length > 0 ? (
             <div>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {featuredPosts.map((post, index) => (
+                {featuredPosts.map((post) => (
                   <div key={post.id} className="h-full hover:-translate-y-2 transition-all duration-300 hover:shadow-lg">
                     <PostCard 
                       post={{
