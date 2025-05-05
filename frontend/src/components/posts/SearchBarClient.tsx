@@ -6,13 +6,12 @@ import { motion } from 'framer-motion';
 
 type SearchBarClientProps = {
   basePath: string;
-  initialSearchTerm: string;
 };
 
-export default function SearchBarClient({ basePath, initialSearchTerm }: SearchBarClientProps) {
+export default function SearchBarClient({ basePath }: SearchBarClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [debouncedTerm, setDebouncedTerm] = useState(searchTerm);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -37,15 +36,13 @@ export default function SearchBarClient({ basePath, initialSearchTerm }: SearchB
       params.delete('search');
     }
 
-    // Reset to page 1 when search changes
     params.delete('page');
-
     router.push(`${basePath}?${params.toString()}`);
   }, [debouncedTerm, router, searchParams, basePath]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setDebouncedTerm(searchTerm); // Immediately apply the search
+    setDebouncedTerm(searchTerm);
   };
 
   return (
