@@ -85,7 +85,7 @@ export default function Home() {
         </div>
         
         {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+        <div className="absolute top-0 left-0 w-full h-100 opacity-10">
           <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-white" />
           <div className="absolute bottom-10 right-10 w-32 h-32 rounded-full bg-white" />
           <div className="absolute top-1/2 left-1/3 w-16 h-16 rounded-full bg-white" />
@@ -216,15 +216,15 @@ export default function Home() {
               Create Your First Post
             </Link>
           ) : (
-            <Link 
-              href="/register" 
-              className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-md text-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-            >
-              Sign Up Now
-            </Link>
-          )}
-        </div>
-      </section>
-    </div>
-  );
-}
+              <Link 
+                href="/register" 
+                className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-md text-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+              >
+                Sign Up Now
+              </Link>
+            )}
+          </div>
+        </section>
+      </div>
+    );
+  }
