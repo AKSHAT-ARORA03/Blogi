@@ -7,14 +7,25 @@ import { useAuth } from '@/context/AuthContext';
 import PostForm from '@/components/posts/PostForm';
 import Link from 'next/link';
 
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+  image_url?: string;
+  author: {
+    id: number;
+    username: string;
+  };
+};
+
 export default function EditPostPage() {
   const params = useParams();
   const router = useRouter();
   const { user, token } = useAuth();
   
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     const fetchPost = async () => {
@@ -22,7 +33,13 @@ export default function EditPostPage() {
       setError(null);
       
       try {
+        if (!params.id || typeof params.id !== 'string') {
+          throw new Error('Invalid post ID');
+        }
         const postId = parseInt(params.id, 10);
+        if (isNaN(postId)) {
+          throw new Error('Invalid post ID');
+        }
         const data = await getPost(postId);
         setPost(data);
         
@@ -76,7 +93,7 @@ export default function EditPostPage() {
           onClick={() => router.back()}
           className="text-blue-600 hover:text-blue-800"
         >
-          &larr; Go back
+          ← Go back
         </button>
       </div>
     );
@@ -87,7 +104,7 @@ export default function EditPostPage() {
       <div className="max-w-3xl mx-auto py-8 text-center">
         <p className="text-xl mb-4">Post not found</p>
         <Link href="/posts" className="text-blue-600 hover:text-blue-800">
-          &larr; Back to posts
+          ← Back to posts
         </Link>
       </div>
     );
