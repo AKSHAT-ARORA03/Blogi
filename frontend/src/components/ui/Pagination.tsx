@@ -33,8 +33,8 @@ export default function Pagination({
     pageNumbers.push(1);
     
     // Calculate start and end of page range around current page
-    let startPage = Math.max(2, currentPage - 1);
-    let endPage = Math.min(totalPages - 1, currentPage + 1);
+    const startPage = Math.max(2, currentPage - 1);
+    const endPage = Math.min(totalPages - 1, currentPage + 1);
     
     // Add ellipsis after page 1 if needed
     if (startPage > 2) {
@@ -83,7 +83,7 @@ export default function Pagination({
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
               aria-label="Previous page"
             >
-              &laquo;
+              «
             </Link>
           </li>
         )}
@@ -94,7 +94,7 @@ export default function Pagination({
           if (page < 0) {
             return (
               <li key={`ellipsis-${index}`}>
-                <span className="px-3 py-2 text-sm">&hellip;</span>
+                <span className="px-3 py-2 text-sm">…</span>
               </li>
             );
           }
@@ -124,7 +124,7 @@ export default function Pagination({
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
               aria-label="Next page"
             >
-              &raquo;
+              »
             </Link>
           </li>
         )}
