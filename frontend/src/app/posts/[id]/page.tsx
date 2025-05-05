@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getPost } from '@/lib/api';
+import { getPost, deletePost } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ type Post = {
 export default function PostDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +65,7 @@ export default function PostDetailPage() {
           onClick={() => router.back()}
           className="text-blue-600 hover:text-blue-800"
         >
-          &larr; Go back
+          ← Go back
         </button>
       </div>
     );
@@ -76,7 +76,7 @@ export default function PostDetailPage() {
       <div className="max-w-3xl mx-auto py-8 text-center">
         <p className="text-xl mb-4">Post not found</p>
         <Link href="/posts" className="text-blue-600 hover:text-blue-800">
-          &larr; Back to posts
+          ← Back to posts
         </Link>
       </div>
     );
@@ -89,14 +89,14 @@ export default function PostDetailPage() {
   return (
     <article className="max-w-3xl mx-auto py-8">
       <Link href="/posts" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
-        &larr; Back to posts
+        ← Back to posts
       </Link>
       
       <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
       
       <div className="flex items-center text-gray-600 dark:text-gray-300 mb-6">
         <span>By {post.author.username}</span>
-        <span className="mx-2">&bull;</span>
+        <span className="mx-2">•</span>
         <span>{formattedDate}</span>
       </div>
       
@@ -130,9 +130,7 @@ export default function PostDetailPage() {
             onClick={async () => {
               if (confirm('Are you sure you want to delete this post?')) {
                 try {
-                  const { token } = useAuth();
                   if (!token) throw new Error('Not authenticated');
-                  const { deletePost } = await import('@/lib/api');
                   await deletePost(post.id, token);
                   router.push('/posts');
                 } catch (err) {
