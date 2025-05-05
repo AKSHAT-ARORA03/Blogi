@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { getPosts } from '@/lib/api';
@@ -95,7 +95,9 @@ export default function Home() {
       {/* Search Section */}
       <section className="mb-12">
         <div className="max-w-2xl mx-auto">
-          <SearchBar basePath="/posts" />
+          <Suspense fallback={<div className="flex justify-center py-4"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-500"></div></div>}>
+            <SearchBar basePath="/posts" />
+          </Suspense>
         </div>
       </section>
       
