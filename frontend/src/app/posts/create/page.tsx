@@ -1,13 +1,11 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
 import PostForm from '@/components/posts/PostForm';
 import Link from 'next/link';
 
 export default function CreatePostPage() {
   const { user } = useAuth();
-  const router = useRouter();
   
   // Redirect to login if not authenticated
   if (!user) {
