@@ -33,7 +33,7 @@ export default function EditPostPage() {
       setError(null);
       
       try {
-        if (!params.id || typeof params.id !== 'string') {
+        if (typeof params.id !== 'string') {
           throw new Error('Invalid post ID');
         }
         const postId = parseInt(params.id, 10);
@@ -103,7 +103,8 @@ export default function EditPostPage() {
     return (
       <div className="max-w-3xl mx-auto py-8 text-center">
         <p className="text-xl mb-4">Post not found</p>
-        <Link href="/posts" className="text-blue-600 hover:text-blue-800">
+        <Link href="/posts" className="text-blue-6
+00 hover:text-blue-800">
           ← Back to posts
         </Link>
       </div>
