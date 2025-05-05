@@ -1,64 +1,80 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import Navbar from "@/components/layout/Navbar";
+'use client';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { usePathname } from 'next/navigation';
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export default function Navbar() {
+  const { user, logout } = useAuth();
+  const pathname = usePathname();
 
-export const metadata: Metadata = {
-  title: "Blogi - A Full-Stack Blog Application",
-  description: "A complete blog application with Next.js frontend and FastAPI backend",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AuthProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8">
-              {children}
-            </main>
-            <footer className="bg-white dark:bg-gray-900 shadow-inner py-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400 text-sm space-y-2">
-                <p>
-                  © {new Date().getFullYear()}{" "}
-                  <span className="font-semibold text-gray-800 dark:text-white">Blogi</span>. Empowering voices through words.
-                </p>
-                <div className="flex justify-center gap-4 text-sm">
-                  <a href="/about" className="hover:underline">About</a>
-                  <a href="/privacy" className="hover:underline">Privacy</a>
-                  <a href="/terms" className="hover:underline">Terms</a>
-                  <a
-                    href="https://github.com/AKSHAT-ARORA03/Blogi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </footer>
+    <nav className="bg-white dark:bg-gray-800 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            {/* Brand Logo */}
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <span className="text-xl font-bold text-blue-600">Blogi</span>
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              {/* ✅ Ensure Home link points to '/' */}
+              <Link
+                href="/"
+                className={`${pathname === '/' ? 'border-blue-500 text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+              >
+                Home
+              </Link>
+              <Link
+                href="/posts"
+                className={`${pathname === '/posts' || pathname.startsWith('/posts/') ? 'border-blue-500 text-gray-900 dark:text-white' : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+              >
+                Posts
+              </Link>
+            </div>
           </div>
-        </AuthProvider>
-      </body>
-    </html>
+
+          {/* Auth Buttons */}
+          <div className="flex items-center">
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/posts/create"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                >
+                  Create Post
+                </Link>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {user.username}
+                </span>
+                <button
+                  onClick={logout}
+                  className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/login"
+                  className={`${pathname === '/login' ? 'bg-blue-600 text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'} px-3 py-2 rounded-md text-sm font-medium`}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className={`${pathname === '/register' ? 'bg-blue-600 text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'} px-3 py-2 rounded-md text-sm font-medium`}
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 }
